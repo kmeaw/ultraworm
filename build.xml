@@ -8,15 +8,25 @@
   <fileset id="libraries" dir="${lib}">
     <include name="**/*.jar" />
   </fileset>
+  <fileset id="gamedata" dir="data">
+    <include name="**/*.jar" />
+  </fileset>
   <path id="binary-path">
     <pathelement path="${bin}" />
   </path>
   <path id="library-path">
     <fileset refid="libraries" />
   </path>
+  <path id="gamedata-path">
+    <fileset refid="gamedata" />
+  </path>
   <path id="master-path">
     <path refid="binary-path" />
     <path refid="library-path" />
+  </path>
+  <path id="launchgame-path">
+    <path refid="master-path" />
+    <path refid="gamedata-path" />
   </path>
   <target name="init">
     <mkdir dir="${bin}" />
@@ -32,11 +42,15 @@
   <target name="buildres" depends="build">
     <java classpathref="master-path" fork="true" classname="com.shavenpuppy.jglib.resources.ResourceConverter" dir="${src}">
        <arg file="${src}/dynamic.xml"/>
-       <arg file="${bin}/resources.dat"/>
+       <arg file="${bin}/resources-puppygames.dat"/>
     </java>
   </target>
   <target name="run" depends="build">
-    <java classpathref="master-path" fork="true" classname="${main-class}" />
+    <java classpathref="launchgame-path" fork="true" classname="${main-class}">
+	<sysproperty key="net.puppygames.applet.Launcher.resources" value="/resources-puppygames.dat"/>
+	<sysproperty key="net.puppygames.applet.Game.gameResource" value="game.puppygames"/>
+	<sysproperty key="java.library.path" path="${lib}"/>
+    </java>
   </target>
   <target name="doc" depends="build">
     <javadoc sourcepath="${src}" classpathref="master-path" destdir="${doc}" access="private" windowtitle="Ultraworm Documentation">
