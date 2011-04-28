@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ultraworm" default="build">
+  <property name="src" location="src" />
+  <property name="bin" location="bin" />
+  <property name="lib" location="libs" />
+  <property name="doc" location="javadoc" />
+  <property name="main-class" value="net.puppygames.applet.Launcher" />
+  <fileset id="libraries" dir="${lib}">
+    <include name="**/*.jar" />
+  </fileset>
+  <fileset id="gamedata" dir="data">
+    <include name="**/*.jar" />
+  </fileset>
+  <path id="binary-path">
+    <pathelement path="${bin}" />
+  </path>
+  <path id="library-path">
+    <fileset refid="libraries" />
+  </path>
+  <path id="gamedata-path">
+    <fileset refid="gamedata" />
+  </path>
+  <path id="master-path">
+    <path refid="binary-path" />
+    <path refid="library-path" />
+  </path>
+  <path id="launchgame-path">
+    <path refid="master-path" />
+    <path refid="gamedata-path" />
+  </path>
+  <target name="init">
+    <mkdir dir="${bin}" />
+    <mkdir dir="${doc}" />
+    <mkdir dir="${lib}" />
+  </target>
+  <target name="build" depends="init">
+    <javac destdir="${bin}" includeantruntime="false" excludes="net/puppygames/applet/server/*.java">
+      <src path="${src}" />
+      <classpath refid="library-path" />
+    </javac>
+  </target>
+  <target name="buildres" depends="build">
+    <java classpathref="master-path" fork="true" classname="com.shavenpuppy.jglib.resources.ResourceConverter" dir="${src}">
+       <arg file="${src}/dynamic.xml"/>
+       <arg file="${bin}/resources-puppygames.dat"/>
+    </java>
+  </target>
+  <target name="run" depends="build">
+    <java classpathref="launchgame-path" fork="true" classname="${main-class}">
+	<sysproperty key="net.puppygames.applet.Launcher.resources" value="/resources-puppygames.dat"/>
+	<sysproperty key="net.puppygames.applet.Game.gameResource" value="game.puppygames"/>
+	<sysproperty key="java.library.path" path="${lib}"/>
+    </java>
+  </target>
+  <target name="doc" depends="build">
+    <javadoc sourcepath="${src}" classpathref="master-path" destdir="${doc}" access="private" windowtitle="Ultraworm Documentation">
+      <doctitle><![CDATA[<h1>Ultraworm Documentation</h1>]]></doctitle>
+      <link href="http://download.oracle.com/javase/6/docs/api/" />
+      <link href="http://www.lwjgl.org/javadoc/" />
+    </javadoc>
+  </target>
+  <target name="clean">
+    <delete dir="${bin}" />
+    <delete dir="${doc}" />
+    <delete file="${jar}" />
+  </target>
+</project>
