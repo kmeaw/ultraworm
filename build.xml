@@ -41,7 +41,7 @@
   </target>
   <target name="buildres" depends="build">
     <java classpathref="master-path" fork="true" classname="com.shavenpuppy.jglib.resources.ResourceConverter" dir="${src}">
-       <arg file="${src}/dynamic.xml"/>
+       <arg file="${src}/resources-public.xml"/>
        <arg file="${bin}/resources-puppygames.dat"/>
     </java>
   </target>
