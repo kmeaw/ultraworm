@@ -5,6 +5,18 @@
   <property name="lib" location="libs" />
   <property name="doc" location="javadoc" />
   <property name="main-class" value="net.puppygames.applet.Launcher" />
+  <condition property="os-family" value="windows">
+    <os family="windows" />
+  </condition>
+  <condition property="os-family" value="linux">
+    <os name="Linux" />
+  </condition>
+  <condition property="os-family" value="macosx">
+    <os name="Mac OS X" />
+  </condition>
+  <condition property="os-family" value="solaris">
+    <os name="Solaris" />
+  </condition>
   <fileset id="libraries" dir="${lib}">
     <include name="**/*.jar" />
   </fileset>
@@ -27,6 +39,7 @@
   <path id="launchgame-path">
     <path refid="master-path" />
     <path refid="gamedata-path" />
+    <pathelement path="${src}" />
   </path>
   <target name="init">
     <mkdir dir="${bin}" />
@@ -49,7 +62,7 @@
     <java classpathref="launchgame-path" fork="true" classname="${main-class}">
 	<sysproperty key="net.puppygames.applet.Launcher.resources" value="/resources-puppygames.dat"/>
 	<sysproperty key="net.puppygames.applet.Game.gameResource" value="game.puppygames"/>
-	<sysproperty key="java.library.path" path="${lib}"/>
+	<sysproperty key="org.lwjgl.librarypath" path="${lib}/native/${os-family}"/>
     </java>
   </target>
   <target name="doc" depends="build">
